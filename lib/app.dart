@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'shared/app_theme.dart';
-import 'features/auth/services/auth_service.dart';
-import 'features/auth/screens/login_screen.dart';
-import 'features/auth/screens/register_screen.dart';
-import 'features/auth/tasks/state/tasks_container.dart';
-import 'features/navigation/main_navigation.dart';
+import 'package:pr5/shared/app_theme.dart';
+import 'package:pr5/features/auth/services/auth_service.dart';
+import 'package:pr5/features/auth/screens/login_screen.dart';
+import 'package:pr5/features/auth/screens/register_screen.dart';
+import 'package:pr5/features/navigation/main_navigation.dart';
+import 'package:pr5/shared/app_router.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -31,16 +31,17 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     final loggedIn = _auth.currentUserNotifier.value != null;
 
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Tasks with Auth',
       theme: AppTheme.light,
-      routes: {
-        '/login': (_) => const LoginScreen(),
-        '/register': (_) => const RegisterScreen(),
-        '/tasks': (_) => const TasksContainer(),
+
+      routerConfig: appRouter,
+
+      builder: (context, child) {
+        if (!loggedIn) return const LoginScreen();
+        return child ?? const MainNavigation();
       },
-      home: loggedIn ? const MainNavigation() : const LoginScreen(),
     );
   }
 }

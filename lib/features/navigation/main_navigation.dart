@@ -13,7 +13,7 @@ class MainNavigation extends StatefulWidget {
 class _MainNavigationState extends State<MainNavigation> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [
+  final List<Widget> _pages = const [
     HomePage(),
     ProfilePage(),
     SettingsPage(),
@@ -25,23 +25,19 @@ class _MainNavigationState extends State<MainNavigation> {
     'Настройки',
   ];
 
+  // Chuyển tab qua index
+  void setTab(int index) {
+    if (index == _currentIndex) return;
+    setState(() => _currentIndex = index);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          _titles[_currentIndex],
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.indigo.shade500,
-        foregroundColor: Colors.white,
-        elevation: 2,
-      ),
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        child: _pages[_currentIndex],
-      ),
+      // Tắt appBar vì các nút sẽ chuyển xuống dưới
+      body: _pages[_currentIndex],
+
+      // Navigation bar sẽ hiển thị ở dưới
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,

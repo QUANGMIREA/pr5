@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pr5/features/auth/tasks/state/tasks_container.dart';
 import 'package:pr5/features/auth/services/auth_service.dart';
 import 'package:pr5/features/auth/tasks/models/task.dart';
-
+import 'package:pr5/features/auth/tasks/screens/tasks_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -55,6 +56,37 @@ class _HomePageState extends State<HomePage> {
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            tooltip: 'Открыть список задач (push)',
+            icon: const Icon(Icons.view_list),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => TasksPage(
+                    tasks: _tasks,
+                    onAdd: () => _showAddDialog(context),
+                    onToggle: _toggleTask,
+                    onDelete: _deleteTask,
+                  ),
+                ),
+              );
+            },
+          ),
+          // 2) Маршрутизированная навигация (router go) → /settings
+          IconButton(
+            tooltip: 'Открыть /settings (router go)',
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => context.go('/settings'),
+          ),
+          // 3) Маршрутизированная навигация (router push) → /profile
+          IconButton(
+            tooltip: 'Перейти в профиль (router push)',
+            icon: const Icon(Icons.person_outline),
+            onPressed: () => context.push('/profile'),
+          ),
+        ],
       ),
       body: _tasks.isEmpty
           ? _buildEmptyState()
@@ -90,17 +122,18 @@ class _HomePageState extends State<HomePage> {
                     decoration: task.isCompleted
                         ? TextDecoration.lineThrough
                         : TextDecoration.none,
-                    color: task.isCompleted
-                        ? Colors.grey
-                        : Colors.black87,
+                    color:
+                    task.isCompleted ? Colors.grey : Colors.black87,
                   ),
                 ),
                 subtitle: task.description != null &&
                     task.description!.isNotEmpty
-                    ? Text(task.description!,
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                    ))
+                    ? Text(
+                  task.description!,
+                  style: TextStyle(
+                    color: Colors.grey.shade600,
+                  ),
+                )
                     : null,
                 trailing: IconButton(
                   icon: const Icon(Icons.delete_outline),
@@ -158,7 +191,8 @@ class _HomePageState extends State<HomePage> {
       builder: (_) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16)),
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: const Text('Добавить новую задачу'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
