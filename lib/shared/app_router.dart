@@ -21,10 +21,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/tasks',
       builder: (_, __) => TasksPage(
-        tasks: appState.tasks,
-        onAdd: () {},
-        onToggle: (_) {},
-        onDelete: (_) {},
+        initialTasks: appState.tasks,
       ),
     ),
   ],

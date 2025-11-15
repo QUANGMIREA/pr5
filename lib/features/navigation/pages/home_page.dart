@@ -65,10 +65,7 @@ class _HomePageState extends State<HomePage> {
                 context,
                 MaterialPageRoute(
                   builder: (_) => TasksPage(
-                    tasks: _tasks,
-                    onAdd: () => _showAddDialog(context),
-                    onToggle: _toggleTask,
-                    onDelete: _deleteTask,
+                    initialTasks: _tasks,
                   ),
                 ),
               );

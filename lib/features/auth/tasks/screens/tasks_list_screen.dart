@@ -1,21 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:pr5/features/auth/tasks/models/task.dart';
 import 'package:pr5/features/auth/services/auth_service.dart';
 import 'package:pr5/features/auth/tasks/widgets/task_table.dart';
+import 'package:pr5/features/auth/tasks/state/task_cubit.dart';
 
 class TasksListScreen extends StatelessWidget {
-  final List<Task> tasks;
-  final VoidCallback onAdd;
-  final ValueChanged<String> onToggle;
-  final ValueChanged<String> onDelete;
-
-  const TasksListScreen({
-    super.key,
-    required this.tasks,
-    required this.onAdd,
-    required this.onToggle,
-    required this.onDelete,
-  });
+  const TasksListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -45,35 +37,46 @@ class TasksListScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            _buildSummaryCard(context),
-            const SizedBox(height: 16),
-            Expanded(
-              child: tasks.isEmpty
-                  ? _buildEmptyState()
-                  : TaskTable(
-                tasks: tasks,
-                onToggle: onToggle,
-                onDelete: onDelete,
-              ),
+
+      // 🔴 Ở đây dùng BlocBuilder để lấy danh sách задач из TasksCubit
+      body: BlocBuilder<TasksCubit, List<Task>>(
+        builder: (context, tasks) {
+          return Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                _buildSummaryCard(context, tasks),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: tasks.isEmpty
+                      ? _buildEmptyState()
+                      : TaskTable(
+                    tasks: tasks,
+                    onToggle: (id) =>
+                        context.read<TasksCubit>().toggleTask(id),
+                    onDelete: (id) =>
+                        context.read<TasksCubit>().deleteTask(id),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
+
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: onAdd,
+        // tạm thời chưa có form riêng, bạn có thể mở route form ở đây
+        onPressed: () {
+          // TODO: mở màn hình добавления задачи, либо вызвать метод addTask(...)
+        },
         icon: const Icon(Icons.add),
         label: const Text('Добавить работу'),
         backgroundColor: Colors.indigo,
       ),
-//
     );
   }
 
-  Widget _buildSummaryCard(BuildContext context) {
+  Widget _buildSummaryCard(BuildContext context, List<Task> tasks) {
     final total = tasks.length;
     final done = tasks.where((t) => t.isCompleted).length;
     final percent = total == 0 ? 0 : (done / total * 100).toInt();
